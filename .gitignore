@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+venv/
+*.log
+
+# Database
+data/chromadb/
+.chroma/
+.chromadb/
+*.db
+*.sqlite3
+
+# Temp files
+.DS_Store
+*.swp
+*.swo
+data/cache/
+
+# Records
+Records.md
