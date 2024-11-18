@@ -10,6 +10,14 @@ setup(
         "pydantic>=2.0.0",
         "python-dotenv>=0.19.0"
     ],
+    extras_require={
+        'ocr': [
+            'XXX',
+        ],
+        'all': [
+            'XXX',
+        ]
+    },
     author="rookielittblack",
     author_email="rookielittleblack@yeah.net",
     description="XpertAgent, a flexible and powerful AI agent framework",

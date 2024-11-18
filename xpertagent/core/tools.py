@@ -6,6 +6,7 @@ This module handles the registration and management of agent tools.
 import os
 import importlib.util
 from typing import List, Dict, Callable
+from ..tools import register_built_in_tools
 from pydantic import BaseModel
 from ..utils.helpers import logger
 from ..config.settings import settings
@@ -33,44 +34,10 @@ class ToolRegistry:
         """Initialize an empty tool registry, register built-in tools, and load custom tools."""
         self._tools: Dict[str, Tool] = {}
         # First register built-in tools
-        self._register_builtin_tools()
+        register_built_in_tools(self)
         # Then load custom tools
         self._load_custom_tools()
 
-    def _register_builtin_tools(self) -> None:
-        """Register all built-in tools."""
-        logger.info("Registering built-in tools...")
-        
-        # Register built-in tools
-        def xpert_calculator(expression: str) -> float:
-            """
-            Basic calculator tool for mathematical expressions.
-            
-            Args:
-                expression: Mathematical expression as string
-                
-            Returns:
-                float: Result of the calculation
-                
-            Example:
-                >>> xpert_calculator("2 + 2")
-                4.0
-                
-            Warning:
-                Uses eval() - should be used with trusted input only
-            """
-            return eval(expression)
-
-        # Register the xpert_calculator tool
-        self.register(
-            "xpert_calculator",
-            "Perform basic mathematical calculations",
-            xpert_calculator
-        )
-        
-        # Add other built-in tools here
-        logger.info(f"Built-in tools registered: {self.list_tools()}")
-    
     def _load_custom_tools(self) -> None:
         """
         Load custom tools from the user's tools directory.
