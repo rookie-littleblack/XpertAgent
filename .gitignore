@@ -1,7 +1,7 @@
 # Python
 __pycache__/
 *.py[cod]
-*.egg-info/
+**/*.egg-info/
 dist/
 build/
 
@@ -12,7 +12,6 @@ build/
 # Environment
 .env
 venv/
-*.log
 
 # Database
 data/chromadb/
@@ -31,3 +30,11 @@ data/cache/
 
 # Records
 Records.md
+Test.md
+
+# Models
+data/models/
+
+# Logs
+data/logs/
+*.log

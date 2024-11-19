@@ -85,5 +85,9 @@ class Settings:
     MAX_STEPS = get_env_int("LLM_MAX_STEPS", 5)              # Maximum steps per task
     TEMPERATURE = get_env_float("LLM_API_TEMPERATURE", 0.7)  # LLM temperature setting
 
+    # Service configuration
+    XOCR_SERVICE_HOST = os.getenv("XOCR_SERVICE_HOST", "127.0.0.1")  # XpertOCR service host
+    XOCR_SERVICE_PORT = get_env_int("XOCR_SERVICE_PORT", 7835)  # XpertOCR service port
+
 # Create global settings instance
 settings = Settings()
