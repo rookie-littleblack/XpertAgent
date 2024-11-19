@@ -5,16 +5,8 @@ This module provides common utility functions used across the project.
 
 import re
 import json
-import logging
 from typing import Any, Dict
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-
-logger = logging.getLogger("XpertAgent")
+from xpertagent.utils.xlogger import logger
 
 def safe_json_loads(text: str) -> Dict[str, Any]:
     """
@@ -76,3 +68,14 @@ def format_tool_response(success: bool, result: Any) -> Dict[str, Any]:
         "success": success,
         "result": str(result)
     }
+
+def safe_parse_bool(value: str) -> bool:
+    """Parse string to boolean value.
+    
+    Args:
+        value (str): String value to parse
+        
+    Returns:
+        bool: Parsed boolean value
+    """
+    return str(value).lower() in ('true', '1', 'yes', 'on', 't')

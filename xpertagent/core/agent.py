@@ -7,9 +7,10 @@ from typing import List, Dict, Any
 from .tools import tool_registry
 from .memory import Memory
 from .planner import Planner, Task
-from ..utils.client import APIClient
-from ..utils.helpers import safe_json_loads, format_tool_response, logger
-from ..config.settings import settings
+from xpertagent.utils.client import APIClient
+from xpertagent.utils.helpers import safe_json_loads, format_tool_response
+from xpertagent.utils.xlogger import logger
+from xpertagent.config.settings import settings
 
 class XpertAgent:
     """
@@ -205,7 +206,7 @@ class XpertAgent:
             
             # Record action and result
             self.memory.add(
-                f"Thought: {thought_result['thought']}\nAction: {thought_result['action']}\nResult: {action_result}",
+                f"Thought: {thought_result['thought']}\nAction: `{thought_result['action']}`\nResult: `{action_result}`",
                 {"type": "agent_action"}
             )
             

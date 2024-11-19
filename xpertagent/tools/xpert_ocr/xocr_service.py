@@ -18,7 +18,7 @@ from transformers import AutoTokenizer
 from GOT.utils.utils import disable_torch_init, KeywordsStoppingCriteria
 from fastapi.responses import JSONResponse
 from GOT.utils.conversation import conv_templates, SeparatorStyle
-from xpertagent.utils.helpers import logger
+from xpertagent.utils.xlogger import logger
 from GOT.model.plug.blip_process import BlipImageEvalProcessor
 
 # Load environment variables from .env file

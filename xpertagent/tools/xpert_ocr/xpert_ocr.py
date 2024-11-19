@@ -10,11 +10,11 @@ import time
 import requests
 from typing import Dict, Any, Tuple, List
 from pathlib import Path
-from ..base import BaseTool, ToolResult
 from urllib.parse import urlparse
-from ...utils.helpers import logger
-from ...config.settings import settings
 from urllib3.exceptions import InsecureRequestWarning
+from xpertagent.tools.base import BaseTool, ToolResult
+from xpertagent.utils.xlogger import logger
+from xpertagent.config.settings import settings
 
 # Disable SSL verification warnings for requests
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -33,6 +33,7 @@ class XpertOCRTool(BaseTool):
         super().__init__()
         self.name = "xpert_ocr_tool"
         self.description = "Extract text from images using XpertOCR"
+
         self.service_url = f"http://127.0.0.1:{settings.XOCR_SERVICE_PORT}/xocr"
         self.max_retries = 3
         self.retry_delay = 2

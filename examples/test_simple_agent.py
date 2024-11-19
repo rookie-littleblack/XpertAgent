@@ -4,7 +4,7 @@ This script creates an agent instance and runs a basic calculation task.
 """
 
 from xpertagent.core.agent import XpertAgent
-from xpertagent.utils.helpers import logger
+from xpertagent.utils.xlogger import logger
 
 def main():
     """

@@ -7,7 +7,7 @@ is already started and running properly. The OCR service must be active for this
 """
 
 from xpertagent.tools import XpertOCRTool
-from xpertagent.utils.helpers import logger
+from xpertagent.utils.xlogger import logger
 
 def test_single_url():
     """Test OCR with a single image URL"""

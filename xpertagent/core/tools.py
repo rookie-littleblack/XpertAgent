@@ -6,10 +6,10 @@ This module handles the registration and management of agent tools.
 import os
 import importlib.util
 from typing import List, Dict, Callable
-from ..tools import register_built_in_tools
 from pydantic import BaseModel
-from ..utils.helpers import logger
-from ..config.settings import settings
+from xpertagent.tools import register_built_in_tools
+from xpertagent.utils.xlogger import logger
+from xpertagent.config.settings import settings
 
 class Tool(BaseModel):
     """

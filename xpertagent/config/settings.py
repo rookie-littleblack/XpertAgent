@@ -6,6 +6,9 @@ This module handles environment variables, paths, and other configuration settin
 import os
 from dotenv import load_dotenv
 
+__AUTHOR__ = "rookielittleblack"
+__VERSION__ = "v0.1.1"
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -63,6 +66,9 @@ class Settings:
     # Ensure all required directories exist
     for path in [DATA_PATH, CHROMA_PATH, LOGS_PATH, CACHE_PATH, CONFIG_PATH, MODELS_PATH, CUSTOM_TOOLS_PATH]:
         os.makedirs(path, exist_ok=True)
+
+    # Project level configuration
+    PROJ_ENV = os.getenv("PROJ_ENV", "dev")  # Project environment
         
     # API configuration
     API_KEY = os.getenv("LLM_API_KEY")
@@ -76,7 +82,7 @@ class Settings:
     
     # Memory configuration
     MEMORY_COLLECTION = "xpertagent_memory"  # ChromaDB collection name
-    MAX_MEMORY_ITEMS = 1000                  # Maximum items in memory
+    MAX_MEMORY_ITEMS = 100                   # Maximum items in memory
     
     # Tool configuration
     DEFAULT_TOOLS = ["search", "calculator", "weather"]  # List of default available tools
@@ -88,6 +94,21 @@ class Settings:
     # Service configuration
     XOCR_SERVICE_HOST = os.getenv("XOCR_SERVICE_HOST", "127.0.0.1")  # XpertOCR service host
     XOCR_SERVICE_PORT = get_env_int("XOCR_SERVICE_PORT", 7835)  # XpertOCR service port
+
+    # Logging configuration
+    XLOGGER_LOG_VER = __VERSION__  # Log version
+    XLOGGER_LOG_DIR = LOGS_PATH  # Log directory
+    XLOGGER_LOG_FILENAME = "xlogger.log"  # Log file name
+    XLOGGER_LOG_MONGODB_ENABLE = str(os.getenv("XLOGGER_MONGODB_ENABLE", "false")).lower() in ('true', '1', 'yes', 'on', 't')  # MongoDB logging enable
+    XLOGGER_LOG_MONGODB_CONFIG = {
+        "user": os.getenv("XLOGGER_MONGODB_USER", "xpertagent_user"),
+        "pass": os.getenv("XLOGGER_MONGODB_PASS", "xpertagent_pass"),
+        "host": os.getenv("XLOGGER_MONGODB_HOST", "127.0.0.1"),
+        "port": os.getenv("XLOGGER_MONGODB_PORT", "27017"),
+        "dbnm": os.getenv("XLOGGER_MONGODB_DBNM", "xpertagent_db"),
+        "clnm": os.getenv("XLOGGER_MONGODB_CLNM", "xpertagent_cl"),
+        "tbnm": os.getenv("XLOGGER_MONGODB_TBNM", "xpertagent_log")
+    }
 
 # Create global settings instance
 settings = Settings()
