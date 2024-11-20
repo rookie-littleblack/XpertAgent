@@ -22,10 +22,10 @@ DATA_STRUCTURE_FOR_XMEDOCR = {
         "Items": [
             {
                 "projectName": "<Name of test item>",
-                "result": "<Test result value>",
+                "result": "<Test result value(remove any abnormal indicators (↑,↓,*,#,△,▲,etc.) as it should be reflected in the abnormalScope field)>",
                 "referenceValue": "<Reference range>",
                 "unit": "<Unit of measurement>",
-                "abnormalScope": "<0: normal, 1: high, -1: low>"
+                "abnormalScope": "<Abnormality indicator: 0: normal, 1: high, -1: low>"
             }
         ]
     },
@@ -73,7 +73,10 @@ Processing Rules:
 2. Standardize date formats (e.g., "2024-05-17" or "2024-05-17 10:05:13")
 3. Include all required fields even if empty
 4. Return only valid JSON string starting with "{{" and ending with "}}"
-5. No comments, annotations, or markdown formatting in response"""
+5. No comments, annotations, or markdown formatting in response
+6. Output JSON must be in a single line without any line breaks or extra whitespace
+7. Do not include any formatting characters or indentation in the JSON output
+8. The response should contain only the JSON string, nothing else"""
 
 PROMPTS_FOR_XMEDOCR = {
     1: format_prompt(PROMPT_TEMPLATE_FOR_XMEDOCR, structure_template=DATA_STRUCTURE_FOR_XMEDOCR[1]),
@@ -81,7 +84,7 @@ PROMPTS_FOR_XMEDOCR = {
     3: format_prompt(PROMPT_TEMPLATE_FOR_XMEDOCR, structure_template=DATA_STRUCTURE_FOR_XMEDOCR[3])
 }
 
-PROMPTS_FOR_XAGENT_OCR_DESC = """You are an AI agent specialized in processing and structuring OCR results. Your capabilities include:
+PROMPTS_FOR_XAGENT_OCR_DESC = f"""You are an AI agent specialized in processing and structuring OCR results. Your capabilities include:
 1. Cleaning and organizing extracted text
 2. Structuring OCR results into standardized formats
 3. Making intelligent inferences to correct potential OCR errors (for example, correcting character order errors like '堂学华清' to '清华学堂' based on semantic context and common usage patterns)
@@ -102,68 +105,25 @@ If and only if the content definitively matches one of these types, structure th
 
 [A - Laboratory Report]
 Required fields:
-{
-    "img_url": "<URL of the image>",
-    "applyDate": "<Application date>",
-    "samplingDate": "<Date of specimen collection>",
-    "receivingDate": "<Date of specimen reception>",
-    "assayDate": "<Date of testing>",
-    "reportDate": "<Date of report>",
-    "checkCategory": "<Category of examination>",
-    "hospital": "<Hospital name>",
-    "specimenSpecies": "<Type of specimen>",
-    "remark": "<Additional notes>",
-    "name": "<Patient name>",
-    "gestationalWeeks": "<Gestational weeks or clinical diagnosis>",
-    "earlyPregnancy": "<Early pregnancy status>",
-    "Items": [
-        {
-            "projectName": "<Name of test item>",
-            "result": "<Test result value>",
-            "referenceValue": "<Reference range>",
-            "unit": "<Unit of measurement>",
-            "abnormalScope": "<0: normal, 1: high, -1: low>"
-        }
-    ]
-}
+{DATA_STRUCTURE_FOR_XMEDOCR[1]}
 
 [B - CT/Imaging Report]
 Required fields:
-{
-    "img_url": "<URL of the image>",
-    "hospital": "<Hospital name>",
-    "checkCategory": "<Examination category>",
-    "checkNum": "<Examination number, usually CT/US number or exam ID>",
-    "checkType": "<Type of examination or department>",
-    "checkDevice": "<Equipment model, usually ultrasound/instrument model>",
-    "checkInfo": "<Imaging findings>",
-    "checkHints": "<Diagnostic suggestions>",
-    "checkDate": "<Examination date>",
-    "name": "<Patient name>",
-    "earlyPregnancy": "<Early pregnancy status>",
-    "gestationalWeeks": "<Gestational weeks or clinical diagnosis>",
-    "checkInfoTitle": "<Title of imaging findings section>",
-    "checkHintsTitle": "<Title of diagnostic suggestions section>"
-}
+{DATA_STRUCTURE_FOR_XMEDOCR[2]}
 
 [C - ID Card]
 Required fields:
-{
-    "img_url": "<URL of the image>",
-    "name": "<Full name>",
-    "gender": "<Gender>",
-    "ethnicity": "<Ethnicity/Nationality>",
-    "birthday": "<Date of birth>",
-    "address": "<Residential address>",
-    "idnumber": "<ID card number>"
-}
+{DATA_STRUCTURE_FOR_XMEDOCR[3]}
 
 Processing Rules for Type A/B/C:
 1. Correct and complete incomplete values based on context
 2. Standardize date formats (e.g., "2024-05-17" or "2024-05-17 10:05:13")
 3. Include all required fields even if empty
-4. Return only valid JSON string starting with "{" and ending with "}"
+4. Return only valid JSON string starting with "{{" and ending with "}}"
 5. No comments, annotations, or markdown formatting in response
+6. Output JSON must be in a single line without any line breaks or extra whitespace
+7. Do not include any formatting characters or indentation in the JSON output
+8. The response should contain only the JSON string, nothing else
 
 [Other Content Types]
 For ANY content that doesn't EXACTLY match the above three types:

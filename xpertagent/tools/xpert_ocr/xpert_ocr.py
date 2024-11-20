@@ -1,6 +1,6 @@
 """
 XpertOCR Tool: A comprehensive tool for text recognition with structured output.
-This tool provides functionality to extract text from images using OCR technology,
+This tool provides functionality to extract text from images using XOCR technology,
 supporting both single image URLs and text containing multiple image URLs.
 """
 
@@ -24,7 +24,7 @@ service_name = "xpert_ocr"
 
 class XpertOCRTool(BaseTool):
     """
-    A tool for performing OCR on images using the XpertOCR service.
+    A tool for performing XOCR on images using the XpertOCR service.
     Supports both direct URL processing and extraction of URLs from text.
     """
     
@@ -34,7 +34,9 @@ class XpertOCRTool(BaseTool):
         self.name = "xpert_ocr_tool"
         self.description = "Extract text from images using XpertOCR"
 
-        self.service_url = f"http://127.0.0.1:{settings.XOCR_SERVICE_PORT}/xocr"
+        #self.service_url = f"http://127.0.0.1:{settings.XOCR_SERVICE_PORT}/xocr/process"
+        self.service_url = f"http://127.0.0.1:{settings.XHTTP_SERVICE_PORT}/xocr/process"
+        
         self.max_retries = 3
         self.retry_delay = 2
         #self._check_service()
@@ -107,7 +109,7 @@ class XpertOCRTool(BaseTool):
             text (str): Input text containing image URLs
             
         Returns:
-            Dict: Processing results including status and OCR output
+            Dict: Processing results including status and XOCR output
         """
         # Extract image URLs from text
         image_urls = self.extract_image_urls(text)
@@ -127,7 +129,7 @@ class XpertOCRTool(BaseTool):
                 "result": []
             }
         
-        # Perform OCR on valid URLs
+        # Perform XOCR on valid URLs
         results = []
         ocr_errors = []
         
@@ -149,7 +151,7 @@ class XpertOCRTool(BaseTool):
         if not results:
             return {
                 "status_code": 3,
-                "desc": "OCR failed for all valid images",
+                "desc": "XOCR failed for all valid images",
                 "result": []
             }
         
@@ -160,7 +162,7 @@ class XpertOCRTool(BaseTool):
         if invalid_urls:
             desc_parts.append(f"{len(invalid_urls)} URL(s) were inaccessible")
         if ocr_errors:
-            desc_parts.append(f"OCR failed for {len(ocr_errors)} image(s)")
+            desc_parts.append(f"XOCR failed for {len(ocr_errors)} image(s)")
         
         return {
             "status_code": 0 if len(results) == len(valid_urls) else 4,
@@ -170,14 +172,14 @@ class XpertOCRTool(BaseTool):
 
     def execute(self, input_text: str) -> ToolResult:
         """
-        Execute OCR recognition on the input.
+        Execute XOCR recognition on the input.
         Supports both direct image URLs and text containing image URLs.
         
         Args:
             input_text (str): Input text or URL to process
             
         Returns:
-            ToolResult: OCR processing result
+            ToolResult: XOCR processing result
         """
         try:
             # Handle direct URL input
@@ -218,13 +220,13 @@ class XpertOCRTool(BaseTool):
 
     def _process_single_url(self, url: str) -> ToolResult:
         """
-        Process a single image URL for OCR.
+        Process a single image URL for XOCR.
         
         Args:
             url (str): Image URL to process
             
         Returns:
-            ToolResult: OCR processing result
+            ToolResult: XOCR processing result
         """
         try:
             # Verify URL accessibility
@@ -232,7 +234,7 @@ class XpertOCRTool(BaseTool):
             if not valid_urls:
                 return self.handle_error(ValueError("Image URL is not accessible"))
 
-            # Send OCR request
+            # Send XOCR request
             response = requests.post(
                 self.service_url,
                 json={"img_url": url},
@@ -261,11 +263,11 @@ class XpertOCRTool(BaseTool):
 
     def _check_service(self) -> None:
         """
-        Check if the OCR service is available.
+        Check if the XOCR service is available.
         Validates service status by sending a test request.
         Implements retry mechanism for reliability.
         """
-        logger.info(f"Checking OCR service at {self.service_url}")
+        logger.info(f"Checking XOCR service at {self.service_url}")
         
         for attempt in range(self.max_retries):
             try:
@@ -377,10 +379,10 @@ class XpertOCRTool(BaseTool):
 
     def format_result(self, result: Dict[str, Any]) -> ToolResult:
         """
-        Format the OCR result into a standardized output.
+        Format the XOCR result into a standardized output.
         
         Args:
-            result (Dict[str, Any]): Raw OCR result
+            result (Dict[str, Any]): Raw XOCR result
             
         Returns:
             ToolResult: Formatted result
@@ -396,7 +398,7 @@ class XpertOCRTool(BaseTool):
 
     def handle_error(self, error: Exception) -> ToolResult:
         """
-        Handle errors in OCR processing.
+        Handle errors in XOCR processing.
         
         Args:
             error (Exception): Error to handle
@@ -404,7 +406,7 @@ class XpertOCRTool(BaseTool):
         Returns:
             ToolResult: Error result
         """
-        logger.error(f"OCR error: {str(error)}")
+        logger.error(f"XOCR error: {str(error)}")
         return ToolResult(
             success=False,
             result="",

@@ -6,19 +6,18 @@ This service provides an HTTP endpoint for performing XOCR on images via URLs.
 import os
 import io
 import torch
-import uvicorn
+import asyncio
 import requests
-import traceback
 
 from PIL import Image
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request
-from pydantic import BaseModel, Field
+from fastapi import FastAPI, Request, APIRouter
+from pydantic import BaseModel
 from GOT.model import GOTQwenForCausalLM
-from contextlib import asynccontextmanager
 from transformers import AutoTokenizer
 from GOT.utils.utils import disable_torch_init, KeywordsStoppingCriteria
 from fastapi.responses import JSONResponse
+from concurrent.futures import ThreadPoolExecutor
 from GOT.utils.conversation import conv_templates, SeparatorStyle
 from xpertagent.utils.xlogger import logger
 from GOT.model.plug.blip_process import BlipImageEvalProcessor
@@ -125,25 +124,6 @@ class XOCRModel:
             
         return outputs.strip()
 
-# Initialize global model instance
-model = None
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """
-    Startup event handler that initializes the XOCR model when the service starts.
-    Raises an exception if the model path doesn't exist.
-    """
-    global model
-    model_path = os.path.join(XAPP_PATH, "data/models/GOT-OCR2_0")
-    if not os.path.exists(model_path):
-        raise Exception(f"GOT-OCR2_0 model path does not exist: `{model_path}`!")
-    model = XOCRModel(model_path)
-    logger.info(f"XOCR Model initialized: `{model_path}`")
-    yield
-
-app = FastAPI(lifespan=lifespan)
-
 async def download_image(url: str) -> Image.Image:
     """
     Download an image from a URL and convert it to PIL Image format.
@@ -162,53 +142,90 @@ async def download_image(url: str) -> Image.Image:
         raise Exception("Failed to download image")
     return Image.open(io.BytesIO(response.content)).convert('RGB')
 
-@app.post("/xocr")
-async def xocr_endpoint(request: Request) -> JSONResponse:
+async def get_xocr_router(executor: ThreadPoolExecutor = None) -> APIRouter:
     """
-    XOCR endpoint that processes incoming image URLs and returns extracted text.
+    Create and return the OCR service router with thread pool support.
     
     Args:
-        request (Request): FastAPI request object containing image URL
-        
+        executor: ThreadPoolExecutor for handling heavy processing tasks
+    
     Returns:
-        JSONResponse: XOCR results or error message
+        APIRouter: FastAPI router configured with XOCR endpoints
+        
+    Raises:
+        Exception: If the required model path does not exist
     """
-    try:
-        # Print raw request body for debugging
-        body = await request.body()
-        logger.info(f"Raw request body length: `{len(body)}`")
-        
-        # Print JSON request data
-        json_data = await request.json()
-        logger.info(f"JSON request: `{json_data}`")
-        
-        # Print request headers
-        headers_dict = dict(request.headers.items())
-        logger.info(f"Headers: `{headers_dict}`")
-        
-        # Process the request
-        xocr_request = XOCRRequest(**json_data)
-        image = await download_image(xocr_request.img_url)
-        result = await model.process_image(image)
+    logger.info(">>> Initializing XOCR service...")
+    router = APIRouter(prefix="/xocr", tags=["XOCR Services"])
+    
+    # Initialize the model
+    model_path = os.path.join(XAPP_PATH, "data/models/GOT-OCR2_0")
+    if not os.path.exists(model_path):
+        raise Exception(f"GOT-OCR2_0 model path does not exist: `{model_path}`!")
+    model = XOCRModel(model_path)
+    logger.info(f">>> XOCR Model initialized: `{model_path}`")
 
-        # Return the result as a JSON response
-        result = {"success": True, "result": result}
-        logger.info(f"XOCR Result: `{result}`")
-        return JSONResponse(content=result)
-    except Exception as e:
-        result = {"success": False, "error": str(e)}
-        logger.error(f"XOCR Error: `{str(e)}`")
-        print(f"Traceback: \n`{traceback.format_exc()}`")
-        return JSONResponse(
-            status_code=500,
-            content=result
+    async def process_xocr_request(data: dict) -> str:
+        """Internal method that can be called directly or via API"""
+        image = await download_image(data["img_url"])
+        # Run heavy processing in thread pool
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(
+            executor,
+            lambda: asyncio.run(model.process_image(image))  # 注意这里的修改
         )
+        return result
+    
+    @router.post("/process")
+    async def xocr_endpoint(request: Request) -> JSONResponse:
+        """
+        XOCR endpoint that processes incoming image URLs and returns extracted text.
+        
+        Args:
+            request (Request): FastAPI request object containing image URL
+            
+        Returns:
+            JSONResponse: XOCR results or error message
+        """
+        try:
+            json_data = await request.json()
+            logger.debug(f"JSON request: `{json_data}`")
+            result = await process_xocr_request(json_data)
+            return JSONResponse(content={"success": True, "result": result})
+        except Exception as e:
+            return JSONResponse(
+                status_code=500,
+                content={"success": False, "error": str(e)}
+            )
+    
+    # Expose internal processing method for direct calls
+    router.process_xocr = process_xocr_request
+    return router
 
-# Usage: Navigate to this project's directory and run:
-# python ./xpertagent/tools/xpert_ocr/xocr_service.py
+# Standalone deployment section
 if __name__ == "__main__":
-    uvicorn.run(
-        app, 
-        host=os.getenv("XOCR_SERVICE_HOST", "127.0.0.1"), 
-        port=int(os.getenv("XOCR_SERVICE_PORT", 7835))
-    )
+    """
+    Standalone deployment entry point for XOCR service.
+    This section allows the XOCR service to be run independently without the main application.
+    
+    Usage:
+        Navigate to the project root directory and run:
+        python -m xpertagent.tools.xpert_ocr.xocr_service
+        
+    Note:
+        This will start only the XOCR service on the configured host and port.
+        For production deployment, consider using the main application with multiple services.
+    """
+    import asyncio
+    
+    app = FastAPI()
+    
+    async def init():
+        """
+        Initialize and configure the standalone FastAPI application.
+        This function sets up the XOCR router for independent deployment.
+        """
+        router = await get_xocr_router()
+        app.include_router(router)
+    
+    asyncio.run(init())

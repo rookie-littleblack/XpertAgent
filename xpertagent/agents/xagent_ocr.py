@@ -1,5 +1,5 @@
 """
-XOCR Agent: An intelligent agent for performing Optical Character Recognition (OCR) 
+XOCR Agent: An intelligent agent for performing Optical Character Recognition (XOCR) 
 on images and extracting structured data.
 """
 
@@ -16,18 +16,15 @@ def main(input_text: str):
     This function:
     1. Creates an XOCR agent instance
     2. Processes the input text containing image URLs
-    3. Returns structured OCR results
+    3. Returns structured XOCR results
     
     Args:
-        input_text (str): User input text containing image URLs or OCR task description
+        input_text (str): User input text containing image URLs or XOCR task description
     """
     logger.info(">>> [xagent_ocr.py] Initializing XOCR agent...")
 
-    # XAgent_OCR description
-    xdesc = PROMPTS_FOR_XAGENT_OCR_DESC
-    
-    # Create an agent instance with OCR capabilities
-    agent = XpertAgent(name="XAgent_OCR", description=xdesc)
+    # Create an agent instance with XOCR capabilities
+    agent = XpertAgent(name="XAgent_OCR", description=PROMPTS_FOR_XAGENT_OCR_DESC)
     
     # Process input and get response
     logger.info(f">>> [xagent_ocr.py] Processing user input: `{input_text}`...")
@@ -40,7 +37,7 @@ def main(input_text: str):
 if __name__ == "__main__":
     # Set up command line argument parser
     parser = argparse.ArgumentParser(
-        description="XOCR Agent - Intelligent OCR Processing Tool",
+        description="XOCR Agent - Intelligent XOCR Processing Tool",
         epilog="""
         Example usage:
         python -m xpertagent.agents.xagent_ocr --input_text "Please extract text from this image: https://www.tsinghua.edu.cn/image/lishiyange03.jpg"
