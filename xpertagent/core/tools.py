@@ -48,8 +48,8 @@ class ToolRegistry:
             - Safely skips files that don't match the expected format
         """
         custom_tools_dir = settings.CUSTOM_TOOLS_PATH
-        logger.info(f"Loading custom tools from directory: {custom_tools_dir}")
-        logger.info(f"Current tools before loading: {self.list_tools()}")
+        logger.debug(f"Loading custom tools from directory: {custom_tools_dir}")
+        logger.debug(f"Current tools before loading: {self.list_tools()}")
         
         # Create __init__.py if it doesn't exist
         init_file = os.path.join(custom_tools_dir, "__init__.py")
@@ -72,15 +72,15 @@ class ToolRegistry:
                         # Call register_tools if it exists
                         if hasattr(module, "register_tools"):
                             module.register_tools(self)
-                            logger.info(f"Successfully loaded tools from {filename}")
-                            logger.info(f"Current tools after loading {filename}: {self.list_tools()}")
+                            logger.debug(f"Successfully loaded tools from {filename}")
+                            logger.debug(f"Current tools after loading {filename}: {self.list_tools()}")
                         else:
                             logger.warning(f"No register_tools function found in {filename}")
                             
                 except Exception as e:
                     logger.error(f"Error loading custom tools from {filename}: {str(e)}")
 
-        logger.info(f"Final tool list: {self.list_tools()}")
+        logger.debug(f"Final tool list: {self.list_tools()}")
 
     def register(self, name: str, description: str, func: Callable) -> None:
         """
@@ -100,7 +100,7 @@ class ToolRegistry:
             description=description,
             func=func
         )
-        logger.info(f"Registered tool: {name}")
+        logger.debug(f"Registered tool: {name}")
     
     def get_tool(self, name: str) -> Tool | None:
         """

@@ -7,7 +7,7 @@ import chromadb
 from typing import List, Dict, Any
 from datetime import datetime
 from chromadb.config import Settings as ChromaSettings
-from ..config.settings import settings
+from xpertagent.config.settings import settings
 
 class Memory:
     """
@@ -72,16 +72,27 @@ class Memory:
             n_results: Maximum number of results to return (default: 5)
             
         Returns:
-            List[str]: List of relevant memory texts
+            List[str]: List of unique relevant memory texts
             
         Note:
-            Uses cosine similarity for matching relevant memories
+            Uses cosine similarity for matching and removes duplicates
         """
         results = self.collection.query(
             query_texts=[query],
             n_results=n_results
         )
-        return results["documents"][0]
+        
+        # Get documents and remove duplicates while preserving order
+        documents = results["documents"][0]
+        seen = set()
+        unique_documents = []
+        
+        for doc in documents:
+            if doc not in seen:
+                seen.add(doc)
+                unique_documents.append(doc)
+        
+        return unique_documents
     
     def clear(self) -> None:
         """

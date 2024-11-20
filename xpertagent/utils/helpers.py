@@ -53,6 +53,58 @@ def safe_json_loads(text: str) -> Dict[str, Any]:
                 "action_input": text
             }
 
+def extract_json_from_string(text: str) -> str:
+    """
+    Extract valid JSON object from a string that might contain extra text.
+    
+    Args:
+        text: String that contains a JSON object
+        
+    Returns:
+        Extracted JSON string or empty string if no valid JSON found
+        
+    Examples:
+        >>> text = "Some text before {\"key\": \"value\"} some text after"
+        >>> extract_json_from_string(text)
+        '{"key": "value"}'
+        
+        >>> text = "Text {\"items\": [{\"id\": 1}, {\"id\": 2}]} text"
+        >>> extract_json_from_string(text)
+        '{"items": [{"id": 1}, {"id": 2}]}'
+    """
+    try:
+        # Find potential JSON by matching balanced braces
+        stack = []
+        start = -1
+        candidates = []
+        
+        for i, char in enumerate(text):
+            if char == '{':
+                if not stack:  # First opening brace
+                    start = i
+                stack.append(char)
+            elif char == '}':
+                if stack:
+                    stack.pop()
+                    if not stack:  # All braces are matched
+                        candidates.append(text[start:i+1])
+        
+        # Try each candidate, starting with the longest ones first
+        # This ensures we get the most complete JSON object
+        for candidate in sorted(candidates, key=len, reverse=True):
+            try:
+                # Verify it's valid JSON by parsing it
+                json.loads(candidate)
+                return candidate
+            except json.JSONDecodeError:
+                continue
+                
+        return ""
+        
+    except Exception as e:
+        print(f"Error extracting JSON: {str(e)}")
+        return ""
+
 def format_tool_response(success: bool, result: Any) -> Dict[str, Any]:
     """
     Format tool execution result into standard response format.
@@ -79,3 +131,7 @@ def safe_parse_bool(value: str) -> bool:
         bool: Parsed boolean value
     """
     return str(value).lower() in ('true', '1', 'yes', 'on', 't')
+
+def format_prompt(prompt_template: str, **kwargs) -> str:
+    """Format prompt template with provided values."""
+    return prompt_template.format(**kwargs)

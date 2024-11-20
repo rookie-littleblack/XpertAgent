@@ -8,12 +8,14 @@ import io
 import torch
 import uvicorn
 import requests
+import traceback
 
 from PIL import Image
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from pydantic import BaseModel, Field
 from GOT.model import GOTQwenForCausalLM
+from contextlib import asynccontextmanager
 from transformers import AutoTokenizer
 from GOT.utils.utils import disable_torch_init, KeywordsStoppingCriteria
 from fastapi.responses import JSONResponse
@@ -36,8 +38,6 @@ class XOCRRequest(BaseModel):
 
     class Config:
         extra = "allow"  # Allow additional fields in request
-
-app = FastAPI()
 
 # Define constants for image tokens
 DEFAULT_IMAGE_TOKEN = "<image>"
@@ -128,8 +128,8 @@ class XOCRModel:
 # Initialize global model instance
 model = None
 
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     """
     Startup event handler that initializes the XOCR model when the service starts.
     Raises an exception if the model path doesn't exist.
@@ -139,6 +139,10 @@ async def startup_event():
     if not os.path.exists(model_path):
         raise Exception(f"GOT-OCR2_0 model path does not exist: `{model_path}`!")
     model = XOCRModel(model_path)
+    logger.info(f"XOCR Model initialized: `{model_path}`")
+    yield
+
+app = FastAPI(lifespan=lifespan)
 
 async def download_image(url: str) -> Image.Image:
     """
@@ -172,14 +176,15 @@ async def xocr_endpoint(request: Request) -> JSONResponse:
     try:
         # Print raw request body for debugging
         body = await request.body()
-        logger.info("Raw request body:", body)
+        logger.info(f"Raw request body length: `{len(body)}`")
         
         # Print JSON request data
         json_data = await request.json()
-        logger.info("JSON request:", json_data)
+        logger.info(f"JSON request: `{json_data}`")
         
         # Print request headers
-        logger.info("Headers:", request.headers)
+        headers_dict = dict(request.headers.items())
+        logger.info(f"Headers: `{headers_dict}`")
         
         # Process the request
         xocr_request = XOCRRequest(**json_data)
@@ -188,11 +193,12 @@ async def xocr_endpoint(request: Request) -> JSONResponse:
 
         # Return the result as a JSON response
         result = {"success": True, "result": result}
-        logger.info("XOCR Result:", result)
+        logger.info(f"XOCR Result: `{result}`")
         return JSONResponse(content=result)
     except Exception as e:
         result = {"success": False, "error": str(e)}
-        logger.error("XOCR Error:", result)
+        logger.error(f"XOCR Error: `{str(e)}`")
+        print(f"Traceback: \n`{traceback.format_exc()}`")
         return JSONResponse(
             status_code=500,
             content=result

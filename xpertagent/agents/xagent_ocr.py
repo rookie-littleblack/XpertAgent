@@ -7,6 +7,7 @@ import argparse
 
 from xpertagent.core.agent import XpertAgent
 from xpertagent.utils.xlogger import logger
+from xpertagent.prompts.p_xocr import PROMPTS_FOR_XAGENT_OCR_DESC
 
 def main(input_text: str):
     """
@@ -21,9 +22,12 @@ def main(input_text: str):
         input_text (str): User input text containing image URLs or OCR task description
     """
     logger.info(">>> [xagent_ocr.py] Initializing XOCR agent...")
+
+    # XAgent_OCR description
+    xdesc = PROMPTS_FOR_XAGENT_OCR_DESC
     
     # Create an agent instance with OCR capabilities
-    agent = XpertAgent(name="XAgent_OCR")
+    agent = XpertAgent(name="XAgent_OCR", description=xdesc)
     
     # Process input and get response
     logger.info(f">>> [xagent_ocr.py] Processing user input: `{input_text}`...")

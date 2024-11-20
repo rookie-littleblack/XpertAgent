@@ -43,14 +43,14 @@ def main():
     ocr_tool = XpertOCRTool()
 
     # Test 1: Single URL (commented out by default)
-    # logger.info(">>> [test_xocr_tool.py] Running Single URL Test...")
-    # result = test_single_url()
-    # process_result(result, "Single URL Test")
+    logger.info(">>> [test_xocr_tool.py] Running Single URL Test...")
+    result = test_single_url()
+    process_result(result, "Single URL Test")
 
-    # Test 2: Multiple URLs in text
-    logger.info(">>> [test_xocr_tool.py] Running Multiple URLs Test...")
-    result = test_multiple_urls()
-    process_result(result, "Multiple URLs Test")
+    # # Test 2: Multiple URLs in text
+    # logger.info(">>> [test_xocr_tool.py] Running Multiple URLs Test...")
+    # result = test_multiple_urls()
+    # process_result(result, "Multiple URLs Test")
 
     # Log completion
     logger.info(">>> [test_xocr_tool.py] XOCR tests completed.")
