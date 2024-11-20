@@ -22,20 +22,19 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
-from xpertagent.protos import xcommon_pb2 as xcommon__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nxocr.proto\x12\x11xpertagent.protos\x1a\rxcommon.proto\"\x1d\n\nOCRRequest\x12\x0f\n\x07img_url\x18\x01 \x01(\t\"H\n\x0bOCRResponse\x12)\n\x06status\x18\x01 \x01(\x0b\x32\x19.xpertagent.protos.Status\x12\x0e\n\x06result\x18\x02 \x01(\t2^\n\x0bXOCRService\x12O\n\x0cProcessImage\x12\x1d.xpertagent.protos.OCRRequest\x1a\x1e.xpertagent.protos.OCRResponse\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nxocr.proto\x12\x11xpertagent.protos\"\x1e\n\x0bXOCRRequest\x12\x0f\n\x07img_url\x18\x01 \x01(\t\"L\n\x0cXOCRResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0e\n\x06status\x18\x02 \x01(\t\x12\x0e\n\x06result\x18\x03 \x01(\t\x12\x0b\n\x03msg\x18\x04 \x01(\t2`\n\x0bXOCRService\x12Q\n\x0cProcessImage\x12\x1e.xpertagent.protos.XOCRRequest\x1a\x1f.xpertagent.protos.XOCRResponse\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'xocr_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_OCRREQUEST']._serialized_start=48
-  _globals['_OCRREQUEST']._serialized_end=77
-  _globals['_OCRRESPONSE']._serialized_start=79
-  _globals['_OCRRESPONSE']._serialized_end=151
-  _globals['_XOCRSERVICE']._serialized_start=153
-  _globals['_XOCRSERVICE']._serialized_end=247
+  _globals['_XOCRREQUEST']._serialized_start=33
+  _globals['_XOCRREQUEST']._serialized_end=63
+  _globals['_XOCRRESPONSE']._serialized_start=65
+  _globals['_XOCRRESPONSE']._serialized_end=141
+  _globals['_XOCRSERVICE']._serialized_start=143
+  _globals['_XOCRSERVICE']._serialized_end=239
 # @@protoc_insertion_point(module_scope)

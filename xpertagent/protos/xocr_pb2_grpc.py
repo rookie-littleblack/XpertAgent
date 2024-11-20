@@ -26,7 +26,8 @@ if _version_not_supported:
 
 
 class XOCRServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Service definition for XOCRService
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -36,16 +37,18 @@ class XOCRServiceStub(object):
         """
         self.ProcessImage = channel.unary_unary(
                 '/xpertagent.protos.XOCRService/ProcessImage',
-                request_serializer=xocr__pb2.OCRRequest.SerializeToString,
-                response_deserializer=xocr__pb2.OCRResponse.FromString,
+                request_serializer=xocr__pb2.XOCRRequest.SerializeToString,
+                response_deserializer=xocr__pb2.XOCRResponse.FromString,
                 _registered_method=True)
 
 
 class XOCRServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Service definition for XOCRService
+    """
 
     def ProcessImage(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """RPC method to process an image, takes XOCRRequest and returns XOCRResponse
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -55,8 +58,8 @@ def add_XOCRServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'ProcessImage': grpc.unary_unary_rpc_method_handler(
                     servicer.ProcessImage,
-                    request_deserializer=xocr__pb2.OCRRequest.FromString,
-                    response_serializer=xocr__pb2.OCRResponse.SerializeToString,
+                    request_deserializer=xocr__pb2.XOCRRequest.FromString,
+                    response_serializer=xocr__pb2.XOCRResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -67,7 +70,8 @@ def add_XOCRServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class XOCRService(object):
-    """Missing associated documentation comment in .proto file."""
+    """Service definition for XOCRService
+    """
 
     @staticmethod
     def ProcessImage(request,
@@ -84,8 +88,8 @@ class XOCRService(object):
             request,
             target,
             '/xpertagent.protos.XOCRService/ProcessImage',
-            xocr__pb2.OCRRequest.SerializeToString,
-            xocr__pb2.OCRResponse.FromString,
+            xocr__pb2.XOCRRequest.SerializeToString,
+            xocr__pb2.XOCRResponse.FromString,
             options,
             channel_credentials,
             insecure,

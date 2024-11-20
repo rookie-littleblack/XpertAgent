@@ -79,9 +79,9 @@ Processing Rules:
 8. The response should contain only the JSON string, nothing else"""
 
 PROMPTS_FOR_XMEDOCR = {
-    1: format_prompt(PROMPT_TEMPLATE_FOR_XMEDOCR, structure_template=DATA_STRUCTURE_FOR_XMEDOCR[1]),
-    2: format_prompt(PROMPT_TEMPLATE_FOR_XMEDOCR, structure_template=DATA_STRUCTURE_FOR_XMEDOCR[2]),
-    3: format_prompt(PROMPT_TEMPLATE_FOR_XMEDOCR, structure_template=DATA_STRUCTURE_FOR_XMEDOCR[3])
+    '1': format_prompt(PROMPT_TEMPLATE_FOR_XMEDOCR, structure_template=DATA_STRUCTURE_FOR_XMEDOCR[1]),
+    '2': format_prompt(PROMPT_TEMPLATE_FOR_XMEDOCR, structure_template=DATA_STRUCTURE_FOR_XMEDOCR[2]),
+    '3': format_prompt(PROMPT_TEMPLATE_FOR_XMEDOCR, structure_template=DATA_STRUCTURE_FOR_XMEDOCR[3])
 }
 
 PROMPTS_FOR_XAGENT_OCR_DESC = f"""You are an AI agent specialized in processing and structuring OCR results. Your capabilities include:

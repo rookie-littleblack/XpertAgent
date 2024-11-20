@@ -8,6 +8,18 @@ import json
 from typing import Any, Dict
 from xpertagent.utils.xlogger import logger
 
+RESPONSE_STATUS_SUCCESS = "0"
+RESPONSE_STATUS_FAILED = "1"
+
+def http_response(success: bool, result: Any, msg: str) -> Dict[str, Any]:
+    """Format tool execution result into standard response format."""
+    return {
+        "success": success,
+        "status": RESPONSE_STATUS_SUCCESS if success else RESPONSE_STATUS_FAILED,
+        "result": str(result),
+        "msg": msg
+    }
+
 def safe_json_loads(text: str) -> Dict[str, Any]:
     """
     Safely parse JSON string with fallback mechanisms.
@@ -116,10 +128,7 @@ def format_tool_response(success: bool, result: Any) -> Dict[str, Any]:
     Returns:
         Dict containing success status and result string
     """
-    return {
-        "success": success,
-        "result": str(result)
-    }
+    return http_response(success, str(result), "")
 
 def safe_parse_bool(value: str) -> bool:
     """Parse string to boolean value.

@@ -23,7 +23,7 @@ import uvicorn
 import grpc
 import asyncio
 
-from typing import Dict, List
+from typing import List
 from fastapi import FastAPI
 from concurrent.futures import ThreadPoolExecutor
 from xpertagent.utils.xlogger import logger

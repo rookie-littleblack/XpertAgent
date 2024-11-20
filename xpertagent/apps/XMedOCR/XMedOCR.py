@@ -26,11 +26,11 @@ import traceback
 from typing import Dict, Any, Optional
 from fastapi import Request, APIRouter
 from fastapi.responses import JSONResponse
-from xpertagent.protos import xmedocr_pb2, xmedocr_pb2_grpc, xcommon_pb2
+from xpertagent.protos import xmedocr_pb2, xmedocr_pb2_grpc
 from concurrent.futures import ThreadPoolExecutor
 from xpertagent.core.agent import XpertAgent
 from xpertagent.utils.xlogger import logger
-from xpertagent.utils.helpers import extract_json_from_string
+from xpertagent.utils.helpers import extract_json_from_string, http_response, RESPONSE_STATUS_SUCCESS, RESPONSE_STATUS_FAILED
 from xpertagent.prompts.p_xocr import PROMPTS_FOR_XMEDOCR
 from xpertagent.tools.xpert_ocr.xocr_service import get_xocr_router, XOCRServicer
 
@@ -80,7 +80,7 @@ class XMedOCR:
         self._initialized = True
         logger.info("XMedOCR APP service initialized")
 
-    async def process(self, img_url: str, img_type: int, xpert_ocr_tool_result: Optional[str] = None) -> Dict[str, Any]:
+    async def process(self, img_url: str, img_type: str, xpert_ocr_tool_result: Optional[str] = None) -> Dict[str, Any]:
         """
         Processes XOCR text and returns structured data.
         
@@ -91,7 +91,7 @@ class XMedOCR:
         
         Args:
             img_url (str): URL of the image to process
-            img_type (int): Document type identifier (1: Lab Report, 2: CT Report, 3: ID Card)
+            img_type (str): Document type identifier (1: Lab Report, 2: CT Report, 3: ID Card)
             xpert_ocr_tool_result (Optional[str]): Pre-processed OCR result if available
             
         Returns:
@@ -192,7 +192,7 @@ async def get_xmedocr_router(executor: ThreadPoolExecutor = None) -> APIRouter:
             )
 
             # Format and return response
-            response = {"success": True, "result": result}
+            response = http_response(True, result, "")
             logger.info(f"XMedOCR Result: `{response}`")
             return JSONResponse(content=response)
         except Exception as e:
@@ -200,7 +200,7 @@ async def get_xmedocr_router(executor: ThreadPoolExecutor = None) -> APIRouter:
             print(f"Traceback: \n`{traceback.format_exc()}`")
             return JSONResponse(
                 status_code=500,
-                content={"success": False, "error": str(e)}
+                content=http_response(False, str(e), "")
             )
     
     return router
@@ -243,20 +243,17 @@ class XMedOCRServicer(xmedocr_pb2_grpc.XMedOCRServiceServicer):
             context: gRPC context for request handling
             
         Returns:
-            xmedocr_pb2.MedOCRResponse: Structured data or error message
-            
-        Note:
-            Uses xcommon_pb2.Status for standardized status reporting
+            xmedocr_pb2.XMedOCRResponse: Structured data or error message
         """
         try:
             # Process with base XOCR service
             xocr_response = await self.xocr_servicer.ProcessImage(request, context)
-            if not xocr_response.status.success:
-                return xmedocr_pb2.MedOCRResponse(
-                    status=xcommon_pb2.Status(
-                        success=False,
-                        error=xocr_response.status.error
-                    )
+            if not xocr_response.success:
+                return xmedocr_pb2.XMedOCRResponse(
+                    success=False,
+                    status=xocr_response.status,
+                    result="",
+                    msg=xocr_response.msg
                 )
 
             # Extract structured data
@@ -267,15 +264,17 @@ class XMedOCRServicer(xmedocr_pb2_grpc.XMedOCRServiceServicer):
             )
             
             # Return successful response
-            return xmedocr_pb2.MedOCRResponse(
-                status=xcommon_pb2.Status(success=True),
-                result=result
+            return xmedocr_pb2.XMedOCRResponse(
+                success=True,
+                status=RESPONSE_STATUS_SUCCESS,
+                result=result,
+                msg=""
             )
         except Exception as e:
             logger.error(f"XMedOCR gRPC Error: {str(e)}")
-            return xmedocr_pb2.MedOCRResponse(
-                status=xcommon_pb2.Status(
-                    success=False,
-                    error=str(e)
-                )
+            return xmedocr_pb2.XMedOCRResponse(
+                success=False,
+                status=RESPONSE_STATUS_FAILED,
+                result="",
+                msg=str(e)
             )

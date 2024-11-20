@@ -26,7 +26,8 @@ if _version_not_supported:
 
 
 class XMedOCRServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Service definition for XMedOCRService
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -36,16 +37,18 @@ class XMedOCRServiceStub(object):
         """
         self.ProcessImage = channel.unary_unary(
                 '/xpertagent.protos.XMedOCRService/ProcessImage',
-                request_serializer=xmedocr__pb2.MedOCRRequest.SerializeToString,
-                response_deserializer=xmedocr__pb2.MedOCRResponse.FromString,
+                request_serializer=xmedocr__pb2.XMedOCRRequest.SerializeToString,
+                response_deserializer=xmedocr__pb2.XMedOCRResponse.FromString,
                 _registered_method=True)
 
 
 class XMedOCRServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Service definition for XMedOCRService
+    """
 
     def ProcessImage(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """RPC method to process an image, takes XMedOCRRequest and returns XMedOCRResponse
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -55,8 +58,8 @@ def add_XMedOCRServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'ProcessImage': grpc.unary_unary_rpc_method_handler(
                     servicer.ProcessImage,
-                    request_deserializer=xmedocr__pb2.MedOCRRequest.FromString,
-                    response_serializer=xmedocr__pb2.MedOCRResponse.SerializeToString,
+                    request_deserializer=xmedocr__pb2.XMedOCRRequest.FromString,
+                    response_serializer=xmedocr__pb2.XMedOCRResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -67,7 +70,8 @@ def add_XMedOCRServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class XMedOCRService(object):
-    """Missing associated documentation comment in .proto file."""
+    """Service definition for XMedOCRService
+    """
 
     @staticmethod
     def ProcessImage(request,
@@ -84,8 +88,8 @@ class XMedOCRService(object):
             request,
             target,
             '/xpertagent.protos.XMedOCRService/ProcessImage',
-            xmedocr__pb2.MedOCRRequest.SerializeToString,
-            xmedocr__pb2.MedOCRResponse.FromString,
+            xmedocr__pb2.XMedOCRRequest.SerializeToString,
+            xmedocr__pb2.XMedOCRResponse.FromString,
             options,
             channel_credentials,
             insecure,

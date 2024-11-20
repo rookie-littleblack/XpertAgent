@@ -35,9 +35,10 @@ from GOT.model import GOTQwenForCausalLM
 from transformers import AutoTokenizer
 from GOT.utils.utils import disable_torch_init, KeywordsStoppingCriteria
 from fastapi.responses import JSONResponse
-from xpertagent.protos import xocr_pb2, xocr_pb2_grpc, xcommon_pb2
+from xpertagent.protos import xocr_pb2, xocr_pb2_grpc
 from concurrent.futures import ThreadPoolExecutor
 from GOT.utils.conversation import conv_templates, SeparatorStyle
+from xpertagent.utils.helpers import http_response, RESPONSE_STATUS_SUCCESS, RESPONSE_STATUS_FAILED
 from xpertagent.utils.xlogger import logger
 from GOT.model.plug.blip_process import BlipImageEvalProcessor
 
@@ -46,21 +47,6 @@ load_dotenv()
 
 # Configure base application path
 XAPP_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
-class XOCRRequest(BaseModel):
-    """
-    Pydantic model for XOCR API requests.
-    
-    Attributes:
-        img_url (str): URL of the image to process
-        
-    Note:
-        Allows additional fields through Config.extra setting
-    """
-    img_url: str
-
-    class Config:
-        extra = "allow"  # Enable additional request parameters
 
 # Define model-specific tokens
 DEFAULT_IMAGE_TOKEN = "<image>"
@@ -241,9 +227,9 @@ def init_xocr_model() -> XOCRModel:
         Uses singleton pattern for resource efficiency
     """
     model_path = os.path.join(XAPP_PATH, "data/models/GOT-OCR2_0")
-    logger.info(f">>> Initializing XOCR service...")
+    logger.info(f">>> Initializing XOCR model: `{model_path}`...")
     model = XOCRModel(model_path)
-    logger.info(f">>> XOCR Model initialized: `{model_path}`")
+    logger.info(f">>> XOCR Model initialized: `{model_path}`!")
     return model
 
 async def get_xocr_router(executor: ThreadPoolExecutor = None) -> APIRouter:
@@ -300,11 +286,11 @@ async def get_xocr_router(executor: ThreadPoolExecutor = None) -> APIRouter:
             json_data = await request.json()
             logger.debug(f"JSON request: `{json_data}`")
             result = await process_xocr_request(json_data)
-            return JSONResponse(content={"success": True, "result": result})
+            return JSONResponse(content=http_response(True, result, ""))
         except Exception as e:
             return JSONResponse(
                 status_code=500,
-                content={"success": False, "error": str(e)}
+                content=http_response(False, str(e), "")
             )
     
     # Expose internal method for direct calls
@@ -340,10 +326,7 @@ class XOCRServicer(xocr_pb2_grpc.XOCRServiceServicer):
             context: gRPC context for request handling
             
         Returns:
-            xocr_pb2.OCRResponse: Response with results or error
-            
-        Note:
-            Uses xcommon_pb2.Status for standardized status reporting
+            xocr_pb2.XOCRResponse: Response with results or error
         """
         try:
             # Process image
@@ -351,15 +334,17 @@ class XOCRServicer(xocr_pb2_grpc.XOCRServiceServicer):
             result = await self.model.process_image(image)
             
             # Return successful response
-            return xocr_pb2.OCRResponse(
-                status=xcommon_pb2.Status(success=True),
-                result=result
+            return xocr_pb2.XOCRResponse(
+                success=True,
+                status=RESPONSE_STATUS_SUCCESS,
+                result=result,
+                msg=""
             )
         except Exception as e:
             logger.error(f"XOCR gRPC Error: {str(e)}")
-            return xocr_pb2.OCRResponse(
-                status=xcommon_pb2.Status(
-                    success=False,
-                    error=str(e)
-                )
+            return xocr_pb2.XOCRResponse(
+                success=False,
+                status=RESPONSE_STATUS_FAILED,
+                result="",
+                msg=str(e)
             )

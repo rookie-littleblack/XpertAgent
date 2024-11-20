@@ -1,18 +1,27 @@
 syntax = "proto3";
 
+// Define the package for the protocol buffer
 package xpertagent.protos;
 
-import "xcommon.proto";
-
+// Service definition for XOCRService
 service XOCRService {
-  rpc ProcessImage (OCRRequest) returns (OCRResponse) {}
+  // RPC method to process an image, takes XOCRRequest and returns XOCRResponse
+  rpc ProcessImage (XOCRRequest) returns (XOCRResponse) {}
 }
 
-message OCRRequest {
+// Message definition for the request to process an image
+message XOCRRequest {
   string img_url = 1;
 }
 
-message OCRResponse {
-  Status status = 1;
-  string result = 2;
+// Message definition for the response after processing an image
+message XOCRResponse {
+  // Boolean indicating if the request was successful
+  bool success = 1;
+  // Status of the image processing (e.g., 0:success, 1:failure)
+  string status = 2;
+  // Result of the OCR process, typically the extracted text
+  string result = 3;
+  // Additional message or information about the processing
+  string msg = 4;
 }

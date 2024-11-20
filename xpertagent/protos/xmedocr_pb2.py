@@ -22,20 +22,19 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
-from xpertagent.protos import xcommon_pb2 as xcommon__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rxmedocr.proto\x12\x11xpertagent.protos\x1a\rxcommon.proto\"2\n\rMedOCRRequest\x12\x0f\n\x07img_url\x18\x01 \x01(\t\x12\x10\n\x08img_type\x18\x02 \x01(\x05\"K\n\x0eMedOCRResponse\x12)\n\x06status\x18\x01 \x01(\x0b\x32\x19.xpertagent.protos.Status\x12\x0e\n\x06result\x18\x02 \x01(\t2g\n\x0eXMedOCRService\x12U\n\x0cProcessImage\x12 .xpertagent.protos.MedOCRRequest\x1a!.xpertagent.protos.MedOCRResponse\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rxmedocr.proto\x12\x11xpertagent.protos\"3\n\x0eXMedOCRRequest\x12\x0f\n\x07img_url\x18\x01 \x01(\t\x12\x10\n\x08img_type\x18\x02 \x01(\t\"O\n\x0fXMedOCRResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0e\n\x06status\x18\x02 \x01(\t\x12\x0e\n\x06result\x18\x03 \x01(\t\x12\x0b\n\x03msg\x18\x04 \x01(\t2i\n\x0eXMedOCRService\x12W\n\x0cProcessImage\x12!.xpertagent.protos.XMedOCRRequest\x1a\".xpertagent.protos.XMedOCRResponse\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'xmedocr_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_MEDOCRREQUEST']._serialized_start=51
-  _globals['_MEDOCRREQUEST']._serialized_end=101
-  _globals['_MEDOCRRESPONSE']._serialized_start=103
-  _globals['_MEDOCRRESPONSE']._serialized_end=178
-  _globals['_XMEDOCRSERVICE']._serialized_start=180
-  _globals['_XMEDOCRSERVICE']._serialized_end=283
+  _globals['_XMEDOCRREQUEST']._serialized_start=36
+  _globals['_XMEDOCRREQUEST']._serialized_end=87
+  _globals['_XMEDOCRRESPONSE']._serialized_start=89
+  _globals['_XMEDOCRRESPONSE']._serialized_end=168
+  _globals['_XMEDOCRSERVICE']._serialized_start=170
+  _globals['_XMEDOCRSERVICE']._serialized_end=275
 # @@protoc_insertion_point(module_scope)
