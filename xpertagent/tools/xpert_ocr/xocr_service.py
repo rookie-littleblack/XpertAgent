@@ -363,31 +363,3 @@ class XOCRServicer(xocr_pb2_grpc.XOCRServiceServicer):
                     error=str(e)
                 )
             )
-
-# Standalone deployment section
-if __name__ == "__main__":
-    """
-    Standalone deployment entry point for XOCR service.
-    This section allows the XOCR service to be run independently without the main application.
-    
-    Usage:
-        Navigate to the project root directory and run:
-        python -m xpertagent.tools.xpert_ocr.xocr_service
-        
-    Note:
-        This will start only the XOCR service on the configured host and port.
-        For production deployment, consider using the main application with multiple services.
-    """
-    import asyncio
-    
-    app = FastAPI()
-    
-    async def init():
-        """
-        Initialize and configure the standalone FastAPI application.
-        This function sets up the XOCR router for independent deployment.
-        """
-        router = await get_xocr_router()
-        app.include_router(router)
-    
-    asyncio.run(init())

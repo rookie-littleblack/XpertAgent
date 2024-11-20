@@ -96,8 +96,6 @@ class Settings:
     XHTTP_SERVICE_PORT = get_env_int("XHTTP_SERVICE_PORT", 7833)  # XpertAgent HTTP service port
     XGRPC_SERVICE_HOST = os.getenv("XGRPC_SERVICE_HOST", "127.0.0.1")  # XpertAgent GRPC service host
     XGRPC_SERVICE_PORT = get_env_int("XGRPC_SERVICE_PORT", 7834)  # XpertAgent GRPC service port
-    XOCR_SERVICE_HOST = os.getenv("XOCR_SERVICE_HOST", "127.0.0.1")  # XpertOCR service host
-    XOCR_SERVICE_PORT = get_env_int("XOCR_SERVICE_PORT", 7835)  # XpertOCR service port
 
     # Logging configuration
     XLOGGER_LOG_VER = __VERSION__  # Log version

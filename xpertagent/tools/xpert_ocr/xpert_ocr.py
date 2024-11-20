@@ -33,10 +33,7 @@ class XpertOCRTool(BaseTool):
         super().__init__()
         self.name = "xpert_ocr_tool"
         self.description = "Extract text from images using XpertOCR"
-
-        #self.service_url = f"http://127.0.0.1:{settings.XOCR_SERVICE_PORT}/xocr/process"
         self.service_url = f"http://127.0.0.1:{settings.XHTTP_SERVICE_PORT}/xocr/process"
-        
         self.max_retries = 3
         self.retry_delay = 2
         #self._check_service()

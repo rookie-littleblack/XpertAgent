@@ -279,39 +279,3 @@ class XMedOCRServicer(xmedocr_pb2_grpc.XMedOCRServiceServicer):
                     error=str(e)
                 )
             )
-
-# Standalone deployment section
-if __name__ == "__main__":
-    """
-    Standalone deployment entry point for XMedOCR service.
-    
-    This section enables independent testing and deployment:
-    1. Initializes XMedOCR service
-    2. Processes a test image
-    3. Measures and logs execution time
-    4. Displays structured results
-    
-    Usage:
-        python -m xpertagent.apps.XMedOCR.XMedOCR
-    """
-    start_time = time.time()
-    xmedocr = XMedOCR()
-    
-    async def test_process():
-        """
-        Test function for processing a sample medical document.
-        
-        Demonstrates:
-        1. Service initialization
-        2. Image processing
-        3. Performance measurement
-        4. Result logging
-        """
-        result = await xmedocr.process(
-            "https://backstage.iandun.com/andun-app/images/temp/e4501f95fb2444bd9df36afbe1143654.png",
-            1
-        )
-        logger.info(f"XMedOCR APP service execution time: {time.time() - start_time} seconds")
-        logger.info(f"Structured data: `{result}`")
-    
-    asyncio.run(test_process())
