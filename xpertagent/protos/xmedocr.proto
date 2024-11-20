@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package xpertagent.protos;
+
+import "xcommon.proto";
+
+service XMedOCRService {
+  rpc ProcessImage (MedOCRRequest) returns (MedOCRResponse) {}
+}
+
+message MedOCRRequest {
+  string img_url = 1;
+  int32 img_type = 2;
+}
+
+message MedOCRResponse {
+  Status status = 1;
+  string result = 2;
+}

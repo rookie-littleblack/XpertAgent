@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package xpertagent.protos;
+
+import "xcommon.proto";
+
+service XOCRService {
+  rpc ProcessImage (OCRRequest) returns (OCRResponse) {}
+}
+
+message OCRRequest {
+  string img_url = 1;
+}
+
+message OCRResponse {
+  Status status = 1;
+  string result = 2;
+}

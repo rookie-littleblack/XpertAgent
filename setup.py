@@ -18,7 +18,9 @@ setup(
         "wavedrom>=2.0.3.post3",
         "websockets>=14.1",
         "wheel>=0.44.0",
-        "pymongo>=4.10.1"
+        "pymongo>=4.10.1",
+        "grpcio>=1.68.0",
+        "grpcio-tools>=1.68.0"
     ],
     package_dir={
         'GOT': 'xpertagent/tools/xpert_ocr/vendor/got_ocr/GOT-OCR-2.0-master'
