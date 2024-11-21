@@ -4,7 +4,6 @@ echo ">>> [init.sh] XpertAgent, a flexible and powerful AI agent framework"
 echo ">>> [init.sh] Author: rookielittblack"
 echo ">>> [init.sh] Email : rookielittblack@yeah.net"
 echo ">>> [init.sh] ======================================================"
-echo ">>> [init.sh] Starting initialization..."
 
 # Check if running in project root directory
 if [[ ! -d "./xpertagent" || ! -f "./setup.py" ]]; then
@@ -36,6 +35,9 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Start initialization
+echo ">>> [init.sh] Starting initialization..."
 
 # Create virtual environment
 env_name="test_xpertagent_$(date +%Y%m%d%H%M)"
@@ -94,9 +96,10 @@ echo ">>> [init.sh] Initialization completed! Environment name: '$env_name'!"
 echo ">>> [init.sh] Next steps:"
 echo ">>> [init.sh] 1. Update .env file"
 echo ">>> [init.sh] 2. Run 'conda activate $env_name' to activate the environment"
-echo ">>> [init.sh] 3. Run 'python examples/test_simple_agent.py' to test the agent"
+echo ">>> [init.sh] 3. Run 'python -m examples.test_simple_agent' to test the agent"
 if [ "$install_ocr" = true ]; then
-    echo ">>> [init.sh] 4. Run 'python examples/test_xocr_tool.py' to test the XpertOCR tool (if this running failed, please check the log file './data/logs/xpert_ocr_service.log' to make sure the XOCR service is running properly)"
+    echo ">>> [init.sh] 4. Run 'python -m xpertagent.services.xservice -t http -s xocr' to start the XOCR service"
+    echo ">>> [init.sh] 5. Run 'python -m examples.test_xocr_tool' to test the XpertOCR tool (if this running failed, please check the log file './data/logs/xpert_ocr_service.log' to make sure the XOCR service is running properly)"
 fi
 echo ">>> [init.sh] ======================================================"
 

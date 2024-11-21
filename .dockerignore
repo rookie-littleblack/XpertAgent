@@ -1,0 +1,43 @@
+# Docker
+.dockerignore
+.git
+.gitignore
+
+### ================================
+
+# Python
+__pycache__/
+*.py[cod]
+**/*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+
+# Database
+data/chromadb/
+.chroma/
+.chromadb/
+*.db
+*.sqlite3
+
+# Temp files
+.DS_Store
+*.swp
+*.swo
+
+# Cache files
+data/cache/
+
+# Records
+Records.md
+Test.md
+
+# Models
+data/models/
+
+# Logs
+data/logs/
+*.log

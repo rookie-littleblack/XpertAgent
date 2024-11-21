@@ -22,6 +22,7 @@ Technical Details:
 import uvicorn
 import grpc
 import asyncio
+import traceback
 
 from typing import List
 from fastapi import FastAPI
@@ -96,7 +97,7 @@ class XService:
             await self._init_grpc_service(service_name)
             
         self._services[service_name] = True
-    
+
     async def _init_http_service(self, service_name: str):
         """
         Initialize HTTP service router.
@@ -172,14 +173,33 @@ class XService:
                 if self.service_type == "grpc":
                     self._server = grpc.aio.server(
                         options=[
-                            ('grpc.max_send_message_length', 50 * 1024 * 1024),
-                            ('grpc.max_receive_message_length', 50 * 1024 * 1024)
+                            ('grpc.max_metadata_size', 32 * 1024 * 1024),  # 32MB
+                            ('grpc.max_send_message_length', 100 * 1024 * 1024),  # 100MB
+                            ('grpc.max_receive_message_length', 100 * 1024 * 1024),  # 100MB
+                            ('grpc.max_concurrent_streams', 1000),
+                            ('grpc.http2.min_time_between_pings_ms', 10000),  # 10s
+                            ('grpc.keepalive_permit_without_calls', 1),
+                            ('grpc.keepalive_time_ms', 60000),  # 60s
+                            ('grpc.keepalive_timeout_ms', 20000),  # 20s
                         ]
                     )
 
+                # Check dependencies!!!
+                if "xmedocr" in services and "xocr" not in services:
+                    logger.warning("XMedOCR requires XOCR, you enabled XMedOCR but not XOCR, the latter will be automatically enabled.")
+                    services.append("xocr")
+
                 # Initialize all services
+                logger.info(f"Initializing services: {services}")
                 for service in services:
-                    await self.init_service(service)
+                    try:
+                        logger.info(f"Attempting to initialize service: {service}")
+                        await self.init_service(service)
+                        logger.info(f"Service {service} initialized successfully")
+                    except Exception as service_init_error:
+                        logger.error(f"Failed to initialize service {service}: {service_init_error}")
+                        logger.error(traceback.format_exc())
+                        raise
 
                 if self.service_type == "http":
                     # Configure and start HTTP server
