@@ -35,7 +35,7 @@ python -m examples.test_simple_agent
 
 ## Custom Tools
 
-Create your own tools in `data/custom_tools/`:
+Create your own tools in `data/custom_tools/` like the following example:
 
 ```python
 # data/custom_tools/weather_tool.py
