@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "xpertagent"
-version = "0.1.1"
+dynamic = ["version"]
 description = "XpertAgent - A flexible and powerful AI agent framework"
 authors = [
     {name = "rookielittblack", email = "rookielittblack@yeah.net"},
@@ -45,3 +45,6 @@ package-dir = {"GOT" = "xpertagent/tools/xpert_ocr/vendor/got_ocr/GOT-OCR-2.0-ma
 
 [tool.setuptools.package-data]
 "*" = ["README.md"]
+
+[tool.setuptools.dynamic]
+version = {file = "VERSION"}

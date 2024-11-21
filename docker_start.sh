@@ -1,9 +1,11 @@
 #!/bin/bash
+VERSION=$(cat /code/VERSION)
 
 #===============================================================================
 # XpertAgent Service Startup Script
-# Author: rookielittblack
-# Email : rookielittblack@yeah.net
+# Version: $VERSION
+# Author : rookielittblack
+# Email  : rookielittblack@yeah.net
 #
 # This script initializes and starts the XpertAgent services in a Docker container
 #===============================================================================

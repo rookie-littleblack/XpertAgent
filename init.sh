@@ -1,8 +1,10 @@
 #!/bin/bash
+VERSION=$(cat ./VERSION)
 echo ">>> [init.sh] ======================================================"
 echo ">>> [init.sh] XpertAgent, a flexible and powerful AI agent framework"
-echo ">>> [init.sh] Author: rookielittblack"
-echo ">>> [init.sh] Email : rookielittblack@yeah.net"
+echo ">>> [init.sh] Version: $VERSION"
+echo ">>> [init.sh] Author : rookielittblack"
+echo ">>> [init.sh] Email  : rookielittblack@yeah.net"
 echo ">>> [init.sh] ======================================================"
 
 # Check if running in project root directory

@@ -1,9 +1,18 @@
 # Use NVIDIA CUDA base image for GPU support
 FROM nvcr.io/nvidia/cuda:12.4.1-devel-ubuntu20.04
 
+# Set version from file
+## Copy VERSION file to container
+COPY VERSION /code/
+## Define build version variable
+ARG BUILD_VERSION
+## Get version from VERSION file
+RUN BUILD_VERSION=$(cat /code/VERSION)
+## Set version label
+LABEL version="${BUILD_VERSION}"
+
 # Set maintainer information
 LABEL maintainer="rookielittblack@yeah.net"
-LABEL version="0.1.1"
 LABEL description="XpertAgent - A flexible and powerful AI agent framework"
 
 # Prevent interactive prompts during package installation

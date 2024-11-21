@@ -6,11 +6,27 @@ This module handles environment variables, paths, and other configuration settin
 import os
 from dotenv import load_dotenv
 
+__EMAIL__ = "rookielittblack@yeah.net"
 __AUTHOR__ = "rookielittleblack"
-__VERSION__ = "v0.1.1"
+__XAPP_NAME__ = "XpertAgent"
+__XAPP_PATH__ = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Load environment variables from .env file
 load_dotenv()
+
+def get_version():
+    """
+    Get the current version of XpertAgent.
+    
+    Args:
+        None
+        
+    Returns:
+        str: Version string read from VERSION file
+    """
+    version_file = os.path.join(__XAPP_PATH__, "VERSION")
+    with open(version_file) as f:
+        return f.read().strip()
 
 def get_env_float(key: str, default: float) -> float:
     """
@@ -52,7 +68,11 @@ class Settings:
     Handles paths, API settings, and other global configurations.
     """
     # Base path configuration
-    XAPP_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    XAPP_PATH = __XAPP_PATH__
+    XAPP_NAME = __XAPP_NAME__
+    XAPP_EMAIL = __EMAIL__
+    XAPP_AUTHOR = __AUTHOR__
+    XAPP_VERSION = get_version()
     
     # Data related paths
     DATA_PATH = os.path.join(XAPP_PATH, "data")
@@ -98,7 +118,7 @@ class Settings:
     XGRPC_SERVICE_PORT = get_env_int("XGRPC_SERVICE_PORT", 7834)  # XpertAgent GRPC service port
 
     # Logging configuration
-    XLOGGER_LOG_VER = __VERSION__  # Log version
+    XLOGGER_LOG_VER = get_version()  # Log version
     XLOGGER_LOG_DIR = LOGS_PATH  # Log directory
     XLOGGER_LOG_FILENAME = "xlogger.log"  # Log file name
     XLOGGER_LOG_MONGODB_ENABLE = str(os.getenv("XLOGGER_MONGODB_ENABLE", "false")).lower() in ('true', '1', 'yes', 'on', 't')  # MongoDB logging enable
@@ -111,6 +131,9 @@ class Settings:
         "clnm": os.getenv("XLOGGER_MONGODB_CLNM", "xpertagent_cl"),
         "tbnm": os.getenv("XLOGGER_MONGODB_TBNM", "xpertagent_log")
     }
+
+    def __str__(self):
+        return f"Settings(XAPP_PATH={self.XAPP_PATH}, XAPP_NAME={self.XAPP_NAME}, XAPP_EMAIL={self.XAPP_EMAIL}, XAPP_AUTHOR={self.XAPP_AUTHOR}, XAPP_VERSION={self.XAPP_VERSION})"
 
 # Create global settings instance
 settings = Settings()
