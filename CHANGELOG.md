@@ -2,6 +2,11 @@
 
 All notable changes to XpertAgent will be documented in this file.
 
+## [0.1.2] - 2024-11-21
+
+### Added
+- Add VERSION file for unified version management
+
 ## [0.1.1] - 2024-11-18
 
 ### Added
@@ -28,3 +33,5 @@ All notable changes to XpertAgent will be documented in this file.
 - Basic agent functionality
 - LLM integration
 - Simple tool system
+
+## __PROJECT_INITIATED__

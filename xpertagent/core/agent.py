@@ -46,13 +46,13 @@ class XpertAgent:
             Dict containing thought process, chosen action, and action input
         """
         try:
-            # If we have a result, format final response
-            if last_result is not None:
-                return {
-                    "thought": "We have the result, now let's explain it clearly.",
-                    "action": "respond",
-                    "action_input": self.format_final_response(input_text, last_result)
-                }
+            # # If we have a result, format final response
+            # if last_result is not None:
+            #     return {
+            #         "thought": "We have the result, now let's explain it clearly.",
+            #         "action": "respond",
+            #         "action_input": self.format_final_response(input_text, last_result)
+            #     }
             
             # Retrieve relevant memories
             relevant_memories = self.memory.search(input_text)
@@ -195,7 +195,7 @@ Analyze the situation and decide the next action. Response must be in JSON forma
         logger.info(f"Available tools: {tool_registry.list_tools()}")
         
         # Record input
-        self.memory.clear()  # Clear all memories
+        #self.memory.clear()  # Clear all memories
         self.memory.add(input_text, {"type": "user_input"})
         
         # Create initial plan

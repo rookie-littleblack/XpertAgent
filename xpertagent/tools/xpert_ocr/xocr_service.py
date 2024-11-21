@@ -284,10 +284,12 @@ async def get_xocr_router(executor: ThreadPoolExecutor = None) -> APIRouter:
         """
         try:
             json_data = await request.json()
-            logger.debug(f"JSON request: `{json_data}`")
+            logger.info(f"XOCR HTTP Request: `{json_data}`")
             result = await process_xocr_request(json_data)
+            logger.info(f"XOCR HTTP Response: `{result}`")
             return JSONResponse(content=http_response(True, result, ""))
         except Exception as e:
+            logger.error(f"XOCR HTTP Error: `{str(e)}`")
             return JSONResponse(
                 status_code=500,
                 content=http_response(False, str(e), "")
@@ -328,12 +330,14 @@ class XOCRServicer(xocr_pb2_grpc.XOCRServiceServicer):
         Returns:
             xocr_pb2.XOCRResponse: Response with results or error
         """
+        logger.info(f"XOCR gRPC Request: `{request}`")
         try:
             # Process image
             image = await download_image(request.img_url)
             result = await self.model.process_image(image)
             
             # Return successful response
+            logger.info(f"XOCR gRPC Response: `{result}`")
             return xocr_pb2.XOCRResponse(
                 success=True,
                 status=RESPONSE_STATUS_SUCCESS,

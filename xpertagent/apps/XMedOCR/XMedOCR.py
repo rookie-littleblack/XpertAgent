@@ -179,7 +179,7 @@ async def get_xmedocr_router(executor: ThreadPoolExecutor = None) -> APIRouter:
         try:
             # Parse and log request data
             json_data = await request.json()
-            logger.info(f"JSON request: `{json_data}`")
+            logger.info(f"XMedOCR HTTP Request: `{json_data}`")
 
             # Process with base XOCR service
             xocr_result = await xocr_router.process_xocr(json_data)
@@ -193,10 +193,10 @@ async def get_xmedocr_router(executor: ThreadPoolExecutor = None) -> APIRouter:
 
             # Format and return response
             response = http_response(True, result, "")
-            logger.info(f"XMedOCR Result: `{response}`")
+            logger.info(f"XMedOCR HTTP Response: `{response}`")
             return JSONResponse(content=response)
         except Exception as e:
-            logger.error(f"XMedOCR Error: `{str(e)}`")
+            logger.error(f"XMedOCR HTTP Error: `{str(e)}`")
             print(f"Traceback: \n`{traceback.format_exc()}`")
             return JSONResponse(
                 status_code=500,
@@ -245,16 +245,20 @@ class XMedOCRServicer(xmedocr_pb2_grpc.XMedOCRServiceServicer):
         Returns:
             xmedocr_pb2.XMedOCRResponse: Structured data or error message
         """
+        logger.info(f"XMedOCR gRPC Request: `{request}`")
         try:
             # Process with base XOCR service
             xocr_response = await self.xocr_servicer.ProcessImage(request, context)
             if not xocr_response.success:
+                logger.error(f"XMedOCR called XOCR gRPC Error: `{xocr_response.msg}`")
                 return xmedocr_pb2.XMedOCRResponse(
                     success=False,
                     status=xocr_response.status,
                     result="",
                     msg=xocr_response.msg
                 )
+            else:
+                logger.info(f"XMedOCR called XOCR gRPC Success: `{xocr_response.result}`")
 
             # Extract structured data
             result = await self.xmedocr.process(
@@ -264,6 +268,7 @@ class XMedOCRServicer(xmedocr_pb2_grpc.XMedOCRServiceServicer):
             )
             
             # Return successful response
+            logger.info(f"XMedOCR gRPC Response: `{result}`")
             return xmedocr_pb2.XMedOCRResponse(
                 success=True,
                 status=RESPONSE_STATUS_SUCCESS,

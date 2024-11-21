@@ -1,14 +1,12 @@
 #!/bin/bash
 VERSION=$(cat /code/VERSION)
-
-#===============================================================================
-# XpertAgent Service Startup Script
-# Version: $VERSION
-# Author : rookielittblack
-# Email  : rookielittblack@yeah.net
-#
-# This script initializes and starts the XpertAgent services in a Docker container
-#===============================================================================
+echo ">>> [docker_start.sh] ==============================================================================="
+echo ">>> [docker_start.sh] XpertAgent Service Startup Script"
+echo ">>> [docker_start.sh] Version: $VERSION"
+echo ">>> [docker_start.sh] Author : rookielittblack"
+echo ">>> [docker_start.sh] Email  : rookielittblack@yeah.net"
+echo ">>> [docker_start.sh] Desc   : This script initializes and starts the XpertAgent services in a Docker container"
+echo ">>> [docker_start.sh] ==============================================================================="
 
 # Exit immediately if a command exits with a non-zero status
 set -e

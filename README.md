@@ -13,20 +13,24 @@ XpertAgent is an open-source platform for building and deploying AI applications
 ## Installation
 
 ```bash
-pip install xpertagent
+git clone https://github.com/rookie-littleblack/XpertAgent.git
+cd XpertAgent
+pip install .
 ```
+
+## Configuration
+
+```bash
+cp .env.example .env
+vim .env
+```
+
+> For a basic using of XpertAgent, you only need to configure the `API configurations (Required)` in the `.env` file.
 
 ## Quick Start
 
-```python
-from xpertagent.core.agent import XpertAgent
-
-# Initialize agent
-agent = XpertAgent(name="XAgent")
-
-# Run agent with input
-response = agent.run("Calculate 123*456 and explain the result")
-print(response)
+```bash
+python -m examples.test_simple_agent
 ```
 
 ## Custom Tools
