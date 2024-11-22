@@ -246,7 +246,7 @@ class DingTalkBotHandler(CallbackHandler):
                 
             msg_type = data.get('msgtype', '')
             if msg_type == 'text':
-                text_content = data.get('text', {}).get('content', '')
+                text_content = data.get('text', {}).get('content', '').strip()
                 logger.info(f"Received text message from {sender_nick}: {text_content}")
                 
                 ### ==================================================================
