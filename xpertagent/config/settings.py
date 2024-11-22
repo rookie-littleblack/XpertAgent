@@ -132,6 +132,11 @@ class Settings:
         "tbnm": os.getenv("XLOGGER_MONGODB_TBNM", "xpertagent_log")
     }
 
+    # Dingtalk configurations
+    XDINGTALK_APP_KEY = os.getenv("XDINGTALK_APP_KEY")
+    XDINGTALK_APP_SECRET = os.getenv("XDINGTALK_APP_SECRET")
+    XDINGTALK_WEBHOOK_TOKEN = os.getenv("XDINGTALK_WEBHOOK_TOKEN")
+
     def __str__(self):
         return f"Settings(XAPP_PATH={self.XAPP_PATH}, XAPP_NAME={self.XAPP_NAME}, XAPP_EMAIL={self.XAPP_EMAIL}, XAPP_AUTHOR={self.XAPP_AUTHOR}, XAPP_VERSION={self.XAPP_VERSION})"
 
