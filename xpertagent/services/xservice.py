@@ -19,9 +19,10 @@ Technical Details:
 - Manages shared thread pool
 - Supports command-line deployment
 """
-import uvicorn
 import grpc
+import httpx
 import asyncio
+import uvicorn
 import traceback
 
 from typing import List
@@ -140,6 +141,97 @@ class XService:
             xmedocr_pb2_grpc.add_XMedOCRServiceServicer_to_server(servicer, self._server)
             logger.info("XMedOCR gRPC service initialized")
     
+    async def make_http_request(self, url: str, method: str = "POST", **kwargs):
+        """
+        Make an internal HTTP request to services within the project.
+
+        ATTENTION: This function asks that the HTTP service should be always running!!!
+        
+        This method provides:
+        1. Standardized HTTP request handling for internal services
+        2. Automatic error handling and logging
+        3. Support for various HTTP methods (GET, POST, PUT, DELETE)
+        4. Configurable request parameters
+        
+        Args:
+            url (str): Target URL for the request
+            method (str): HTTP method (GET, POST, PUT, DELETE)
+            **kwargs: Additional request parameters including:
+                - headers (dict): Custom HTTP headers
+                - params (dict): URL parameters for GET requests
+                - json (dict): JSON body for POST/PUT requests
+                - timeout (float): Request timeout in seconds
+                
+        Returns:
+            dict: Response data from the service
+            
+        Raises:
+            ValueError: If method is invalid or URL is malformed
+            HTTPError: If the request fails or returns an error status
+            TimeoutError: If the request exceeds timeout limit
+
+        # Example GET request
+        response = await service.make_http_request("/xocr/process", method="GET", params={"key": "value"})
+
+        # Example POST request with JSON body
+        response = await service.make_http_request(
+            "/xocr/process",
+            method="POST",
+            json={"data": "value"},
+            headers={"Authorization": "Bearer token"}
+        )
+        """
+        import urllib.parse
+        
+        # Validate HTTP method
+        method = method.upper()
+        if method not in ["GET", "POST", "PUT", "DELETE"]:
+            raise ValueError(f"Unsupported HTTP method: {method}")
+            
+        # Ensure URL is properly formatted
+        if not url.startswith("/"):
+            raise ValueError(f"URL must start with /: `{url}`")
+
+        # Construct http URL
+        url = f"http://127.0.0.1:{settings.XHTTP_SERVICE_PORT}{url}"
+        logger.info(f"Internal http request url is `{url}`...")
+            
+        # Extract request parameters
+        headers = kwargs.get("headers", {})
+        timeout = kwargs.get("timeout", 30.0)
+        
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                # Prepare and send the request
+                response = await client.request(
+                    method=method,
+                    url=url,
+                    headers=headers,
+                    params=kwargs.get("params"),
+                    json=kwargs.get("json")
+                )
+                
+                # Raise exception for error status codes
+                response.raise_for_status()
+                
+                # Return JSON response if available, otherwise return text
+                try:
+                    return response.json()
+                except ValueError:
+                    return {"text": response.text}
+                    
+        except httpx.TimeoutException as e:
+            logger.error(f"Request timeout for {url}: {str(e)}")
+            raise TimeoutError(f"Request timed out after {timeout} seconds")
+            
+        except httpx.HTTPError as e:
+            logger.error(f"HTTP error for {url}: {str(e)}")
+            raise
+            
+        except Exception as e:
+            logger.error(f"Error making request to {url}: {str(e)}")
+            raise
+
     def run(self, services: List[str]):
         """
         Main entry point for running the service.

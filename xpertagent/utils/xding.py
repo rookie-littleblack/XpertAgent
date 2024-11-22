@@ -25,6 +25,7 @@ from dingtalk_stream import CallbackHandler
 from concurrent.futures import ThreadPoolExecutor
 from xpertagent.utils.xlogger import logger
 from xpertagent.config.settings import settings
+from xpertagent.services.xservice import XService
 
 class DingTalkBotHandler(CallbackHandler):
     """
@@ -41,6 +42,7 @@ class DingTalkBotHandler(CallbackHandler):
 
     def __init__(self):
         super().__init__()
+        self.xservice = XService()
         self.app_key = settings.XDINGTALK_APP_KEY
         self.app_secret = settings.XDINGTALK_APP_SECRET
         self.webhook_token = settings.XDINGTALK_WEBHOOK_TOKEN
@@ -247,7 +249,19 @@ class DingTalkBotHandler(CallbackHandler):
                 text_content = data.get('text', {}).get('content', '')
                 logger.info(f"Received text message from {sender_nick}: {text_content}")
                 
-                response = f"Message received from {sender_nick}: {text_content}"
+                ### ==================================================================
+                ### 临时测试：用 XOCR！！！
+                if text_content.startswith("http://") or text_content.startswith("https://"):
+                    http_response = await self.xservice.make_http_request(
+                        "/xocr/process",
+                        json={
+                            "img_url": text_content
+                        }
+                    )
+                    response = http_response["result"]
+                else:
+                    response = f"Message received from {sender_nick}: `{text_content}`. \n\nIf you want to use the XOCR service, please send an image URL."
+                ### ==================================================================
                 
                 if conversation_type == '1':  # Individual chat
                     session_webhook = data.get('sessionWebhook')
