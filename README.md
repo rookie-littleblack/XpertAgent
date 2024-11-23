@@ -12,13 +12,14 @@ XpertAgent is an open-source platform for building and deploying AI applications
 
 ## Installation
 
+- Clone the project from GitHub
+
 ```bash
 git clone https://github.com/rookie-littleblack/XpertAgent.git
 cd XpertAgent
-pip install .
 ```
 
-## Configuration
+- Configure the environment variables in the `.env` file
 
 ```bash
 cp .env.example .env
@@ -27,38 +28,23 @@ vim .env
 
 > For a basic using of XpertAgent, you only need to configure the `API configurations (Required)` in the `.env` file.
 
+- Initiate the project
+
+```bash
+./init.sh --with-xocr
+```
+
+- Then, following the steps of the printed messages in the terminal to start the project, for example:
+
+```bash
+conda activate XXX  # Activate the environment
+```
+
 ## Quick Start
 
 ```bash
 python -m examples.test_simple_agent
 ```
-
-## Custom Tools
-
-Create your own tools in `data/custom_tools/` like the following example:
-
-```python
-# data/custom_tools/weather_tool.py
-
-def get_weather(location: str) -> str:
-    """Get weather information for a location."""
-    return f"Weather information for {location}"
-
-def register_tools(registry):
-    """Register custom tools with the agent."""
-    registry.register(
-        "weather",
-        "Get weather information for a location",
-        get_weather
-    )
-```
-
-## Documentation
-
-For detailed documentation, please visit:
-- [Getting Started](docs/guides/getting_started.md)
-- [API Reference](docs/api/index.md)
-- [Examples](docs/examples/index.md)
 
 ## Contributing
 

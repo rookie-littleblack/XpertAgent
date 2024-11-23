@@ -26,6 +26,7 @@ data/chromadb/
 .DS_Store
 *.swp
 *.swo
+data/assets/others/
 
 # Cache files
 data/cache/
