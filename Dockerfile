@@ -42,16 +42,16 @@ RUN apt-get update && apt-get install -y \
     libxext6 \
     libxrender-dev \
     && rm -rf /var/lib/apt/lists/*
+    
+# Install Git LFS
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
+apt-get install -y git-lfs && \
+git lfs install
 
 # # Download and install Anaconda
 # RUN wget https://repo.anaconda.com/archive/Anaconda3-2023.09-0-Linux-x86_64.sh -O anaconda.sh && \
 #     bash anaconda.sh -b -p /root/anaconda3 && \
 #     rm anaconda.sh
-
-# Install Git LFS
-RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
-    apt-get install -y git-lfs && \
-    git lfs install
 
 # Download and install Miniconda instead of Anaconda
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && \
@@ -86,8 +86,11 @@ RUN /bin/bash -c "source /root/anaconda3/etc/profile.d/conda.sh && \
     pip install -e ./xpertagent/tools/xpert_ocr/vendor/got_ocr/GOT-OCR-2.0-master -i https://pypi.tuna.tsinghua.edu.cn/simple --root-user-action=ignore"
 
 # Clone the model repository with Git LFS
-RUN cd /code/data/models && \
-    git clone https://www.modelscope.cn/stepfun-ai/GOT-OCR2_0.git
+# NOTE: If you have already cloned the repository, you can skip this step instead by 
+# mounting the directory which contains the cloned repositories to `/code/data/models`
+# RUN cd /code/data/models && \
+#     git clone https://www.modelscope.cn/stepfun-ai/GOT-OCR2_0.git && \
+#     git clone https://www.modelscope.cn/AIDC-AI/Marco-o1.git
 
 # Clear proxy settings after all installations are complete
 ENV HTTP_PROXY=""
@@ -168,5 +171,8 @@ CMD ["/bin/bash", "/code/docker_start.sh"]
 # -p 7934:7834 \
 # xpertagent:latest
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# ATTENTION: The simplified command is:
+# ./deploy.sh
 # ##########################################################################
 # ##########################################################################
