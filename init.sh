@@ -68,6 +68,9 @@ fi
 # Install main dependencies
 echo ">>> [init.sh] Installing main package dependencies into environment '$env_name'..."
 pip install -e . -i https://pypi.tuna.tsinghua.edu.cn/simple
+## ATTENTION: This command will install the main package in editable mode
+## If you have changed your code while the package has not been updated, 
+## you can run this command again to update the package!
 
 # Install OCR if requested
 if [ "$install_ocr" = true ]; then

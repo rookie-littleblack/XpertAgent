@@ -42,3 +42,6 @@ data/models/
 # Logs
 data/logs/
 *.log
+
+# Examples
+examples/dev/
